@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Premium Notes App</title>
+
+    <!-- GOOGLE FONT -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FONT AWESOME -->
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
+
+        body{
+            background:linear-gradient(135deg,#dbeafe,#eef2ff,#f8fafc);
+            min-height:100vh;
+            padding:40px;
+            overflow-x:hidden;
+        }
+
+        /* MAIN CONTAINER */
+
+        .container{
+            max-width:1000px;
+            margin:auto;
+        }
+
+        /* HEADER */
+
+        .header{
+            text-align:center;
+            margin-bottom:40px;
+        }
+
+        .header h1{
+            font-size:55px;
+            color:#1e3a8a;
+            margin-bottom:10px;
+            font-weight:700;
+        }
+
+        .header p{
+            color:#475569;
+            font-size:16px;
+        }
+
+        .header i{
+            color:#2563eb;
+            margin-right:10px;
+        }
+
+        /* FORM */
+
+        .note-form{
+            background:rgba(255,255,255,0.8);
+            backdrop-filter:blur(15px);
+            padding:30px;
+            border-radius:24px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom:40px;
+        }
+
+        .note-form input,
+        .note-form textarea{
+            width:100%;
+            padding:16px;
+            margin-top:18px;
+            border:none;
+            border-radius:16px;
+            background:#f8fafc;
+            font-size:15px;
+            border:2px solid transparent;
+            transition:0.3s;
+            outline:none;
+        }
+
+        .note-form input:focus,
+        .note-form textarea:focus{
+            border-color:#2563eb;
+            background:white;
+            transform:translateY(-2px);
+        }
+
+        .note-form textarea{
+            height:160px;
+            resize:none;
+        }
+
+        /* BUTTON */
+
+        .note-form button{
+            margin-top:20px;
+            padding:15px 22px;
+            background:linear-gradient(135deg,#2563eb,#3b82f6);
+            color:white;
+            border:none;
+            border-radius:16px;
+            cursor:pointer;
+            font-size:15px;
+            font-weight:600;
+            transition:0.3s;
+            box-shadow:0 8px 20px rgba(37,99,235,0.25);
+        }
+
+        .note-form button:hover{
+            transform:translateY(-3px);
+            box-shadow:0 12px 24px rgba(37,99,235,0.35);
+        }
+
+        /* NOTES GRID */
+
+        .notes{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+            gap:25px;
+        }
+
+        /* CARD */
+
+        .card{
+            background:white;
+            padding:25px;
+            border-radius:24px;
+            box-shadow:0 8px 22px rgba(0,0,0,0.06);
+            transition:0.35s;
+            position:relative;
+            overflow:hidden;
+            border:1px solid #e2e8f0;
+        }
+
+        .card::before{
+            content:'';
+            position:absolute;
+            width:120px;
+            height:120px;
+            background:#dbeafe;
+            border-radius:50%;
+            top:-50px;
+            right:-50px;
+        }
+
+        .card:hover{
+            transform:translateY(-6px);
+            box-shadow:0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .card h2{
+            color:#1d4ed8;
+            margin-bottom:12px;
+            font-size:26px;
+            position:relative;
+            z-index:1;
+        }
+
+        .card p{
+            color:#475569;
+            line-height:1.8;
+            position:relative;
+            z-index:1;
+        }
+
+        /* DELETE BUTTON */
+
+        .delete-btn{
+            margin-top:18px;
+            padding:12px 16px;
+            background:#ef4444;
+            color:white;
+            border:none;
+            border-radius:14px;
+            cursor:pointer;
+            font-size:14px;
+            font-weight:600;
+            transition:0.3s;
+        }
+
+        .delete-btn:hover{
+            background:#dc2626;
+            transform:translateY(-2px);
+        }
+
+        /* EMPTY STATE */
+
+        .empty{
+            text-align:center;
+            padding:60px;
+            color:#64748b;
+        }
+
+        .empty i{
+            font-size:60px;
+            margin-bottom:20px;
+            color:#94a3b8;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:700px){
+
+            body{
+                padding:20px;
+            }
+
+            .header h1{
+                font-size:40px;
+            }
+
+            .note-form{
+                padding:22px;
+            }
+
+            .notes{
+                grid-template-columns:1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+
+        <div class="header">
+
+            <h1>
+
+                <i class="fa-solid fa-note-sticky"></i>
+
+                My Notes
+
+            </h1>
+
+            <p>
+                Save your thoughts beautifully and stay organized
+            </p>
+
+        </div>
+
+        <!-- FORM -->
+
+        <form method="POST" class="note-form">
+
+            {% csrf_token %}
+
+            <input 
+                type="text" 
+                placeholder="Enter note title"
+                name="title">
+
+            <textarea
+                placeholder="Write your note here..."
+                name="content"></textarea>
+
+            <button type="submit">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Add Note
+
+            </button>
+
+        </form>
+
+        <!-- NOTES -->
+
+        <div class="notes">
+
+            {% for i in tasks %}
+
+            <div class="card">
+
+                <h2>
+
+                    {{ i.title }}
+
+                </h2>
+
+                <p>
+
+                    {{ i.content }}
+
+                </p>
+
+                <!-- DELETE BUTTON -->
+
+                <a href="{% url 'delete' i.id %}">
+
+                    <button class="delete-btn">
+
+                        <i class="fa-solid fa-trash"></i>
+
+                        Delete
+
+                    </button>
+
+                </a>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty">
+
+                <i class="fa-solid fa-box-open"></i>
+
+                <h2>No Notes Yet</h2>
+
+                <p>Add your first note to get started</p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+
